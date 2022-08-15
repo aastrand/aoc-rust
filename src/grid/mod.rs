@@ -1,3 +1,5 @@
+pub mod hex;
+
 use std::{cmp::max, cmp::min, collections::HashMap};
 
 pub static RIGHT: (i64, i64) = (1, 0);
