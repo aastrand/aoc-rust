@@ -117,7 +117,7 @@ impl Grid {
 mod tests {
     use super::*;
 
-    fn get_input() -> Vec<&'static str> {
+    fn get_input<'a>() -> Vec<&'a str> {
         let mut data = vec![];
         data.push(".......#................#......");
         data.push("...#.#.....#.##.....#..#.......");

@@ -1,22 +1,18 @@
 use std::collections::{HashMap, HashSet};
 use std::hash::Hash;
 
-pub fn dijkstra<T>(
-    start: &'static T,
-    end: &'static T,
-    graph: &HashMap<&'static T, Vec<&'static T>>,
-) -> (
-    Vec<&'static T>,
-    HashMap<&'static T, f64>,
-    HashMap<&'static T, &'static T>,
-)
+pub fn dijkstra<'a, T>(
+    start: &'a T,
+    end: &'a T,
+    graph: &HashMap<&'a T, Vec<&'a T>>,
+) -> (Vec<&'a T>, HashMap<&'a T, f64>, HashMap<&'a T, &'a T>)
 where
     T: Eq + Hash,
 {
-    let mut q: HashSet<&'static T> = HashSet::new();
-    let mut dist: HashMap<&'static T, f64> = HashMap::new();
-    let mut prev: HashMap<&'static T, &'static T> = HashMap::new();
-    let empty: Vec<&'static T> = vec![];
+    let mut q: HashSet<&'a T> = HashSet::new();
+    let mut dist: HashMap<&'a T, f64> = HashMap::new();
+    let mut prev: HashMap<&'a T, &'a T> = HashMap::new();
+    let empty: Vec<&'a T> = vec![];
 
     for pos in graph.keys() {
         dist.insert(pos, f64::INFINITY);
@@ -54,7 +50,7 @@ where
     (path, dist, prev)
 }
 
-fn get_min_dist<T>(q: &HashSet<&'static T>, dist: &HashMap<&'static T, f64>) -> Option<&'static T>
+fn get_min_dist<'a, T>(q: &HashSet<&'a T>, dist: &HashMap<&'a T, f64>) -> Option<&'a T>
 where
     T: Eq + Hash,
 {

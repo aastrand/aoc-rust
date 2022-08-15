@@ -3,27 +3,24 @@ pub mod dijkstra;
 use std::collections::{HashMap, HashSet, VecDeque};
 use std::hash::Hash;
 
-pub fn bfs<T>(
-    start: &'static T,
-    graph: &HashMap<&'static T, Vec<&'static T>>,
-) -> HashSet<&'static T>
+pub fn bfs<'a, T>(start: &'a T, graph: &HashMap<&'a T, Vec<&'a T>>) -> HashSet<&'a T>
 where
     T: Eq + Hash,
 {
     bfs_with_visitor(start, graph, |_n| {})
 }
 
-pub fn bfs_with_visitor<T, F>(
-    start: &'static T,
-    graph: &HashMap<&'static T, Vec<&'static T>>,
+pub fn bfs_with_visitor<'a, T, F>(
+    start: &'a T,
+    graph: &HashMap<&'a T, Vec<&'a T>>,
     mut visitor: F,
-) -> HashSet<&'static T>
+) -> HashSet<&'a T>
 where
     T: Eq + Hash,
-    F: FnMut(&'static T),
+    F: FnMut(&'a T),
 {
-    let mut visited: HashSet<&'static T> = HashSet::new();
-    let mut q: VecDeque<&'static T> = VecDeque::new();
+    let mut visited: HashSet<&'a T> = HashSet::new();
+    let mut q: VecDeque<&'a T> = VecDeque::new();
 
     q.push_back(start);
     visited.insert(start);
@@ -45,27 +42,24 @@ where
     visited
 }
 
-pub fn dfs<T>(
-    start: &'static T,
-    graph: &HashMap<&'static T, Vec<&'static T>>,
-) -> HashSet<&'static T>
+pub fn dfs<'a, T>(start: &'a T, graph: &HashMap<&'a T, Vec<&'a T>>) -> HashSet<&'a T>
 where
     T: Eq + Hash,
 {
     dfs_with_visitor(start, graph, |_n| {})
 }
 
-pub fn dfs_with_visitor<T, F>(
-    start: &'static T,
-    graph: &HashMap<&'static T, Vec<&'static T>>,
+pub fn dfs_with_visitor<'a, T, F>(
+    start: &'a T,
+    graph: &HashMap<&'a T, Vec<&'a T>>,
     mut visitor: F,
-) -> HashSet<&'static T>
+) -> HashSet<&'a T>
 where
     T: Eq + Hash + Sized,
-    F: FnMut(&'static T),
+    F: FnMut(&'a T),
 {
-    let mut visited: HashSet<&'static T> = HashSet::new();
-    let mut q: VecDeque<&'static T> = VecDeque::new();
+    let mut visited: HashSet<&'a T> = HashSet::new();
+    let mut q: VecDeque<&'a T> = VecDeque::new();
 
     q.push_back(start);
     visited.insert(start);
@@ -136,7 +130,7 @@ mod tests {
 
     #[test]
     fn test_dfs_traverse() {
-        let mut graph: HashMap<&'static &str, Vec<&'static &str>> = HashMap::new();
+        let mut graph = HashMap::new();
         graph.insert(&"0", vec![&"1", &"2"]);
         graph.insert(&"1", vec![&"0", &"2", &"3", &"4"]);
         graph.insert(&"2", vec![&"0", &"1", &"3", &"5"]);
