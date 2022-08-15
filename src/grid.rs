@@ -100,6 +100,15 @@ impl Grid {
             println!("{}", line);
         }
     }
+
+    pub fn walk<F>(&mut self, mut visitor: F)
+    where
+        F: FnMut((i64, i64), char),
+    {
+        for (k, v) in &self.data {
+            visitor(*k, *v)
+        }
+    }
 }
 
 #[cfg(test)]
@@ -173,5 +182,23 @@ mod tests {
         }
 
         grid.print();
+    }
+
+    #[test]
+    fn test_count() {
+        let mut grid = Grid::empty();
+        grid.set('#', -10, 23);
+        grid.set('#', 100, -2);
+        grid.set('.', -10, 23);
+        grid.set('.', 0, 0);
+
+        let mut count = 0;
+        grid.walk(|_pos, val| {
+            if val == '#' {
+                count += 1;
+            }
+        });
+
+        assert_eq!(1, count);
     }
 }
