@@ -79,7 +79,8 @@ impl Grid {
         self.max_y = max(self.max_y, y);
     }
 
-    pub fn print(&self) {
+    fn prepare_print(&self) -> Vec<String> {
+        let mut output = vec![];
         for y in self.min_y..self.max_y {
             let mut line = String::new();
             for x in self.min_x..self.max_x {
@@ -88,6 +89,14 @@ impl Grid {
                     _ => line.push('.'),
                 }
             }
+            output.push(line);
+        }
+
+        output
+    }
+
+    pub fn print(&self) {
+        for line in self.prepare_print() {
             println!("{}", line);
         }
     }
@@ -97,7 +106,7 @@ impl Grid {
 mod tests {
     use super::*;
 
-    fn get_grid() -> Grid {
+    fn get_input() -> Vec<&'static str> {
         let mut data = vec![];
         data.push(".......#................#......");
         data.push("...#.#.....#.##.....#..#.......");
@@ -109,7 +118,7 @@ mod tests {
         data.push("##..#.#...##.....#.#..........#");
         data.push(".#....#..#..#......#....#....#.");
 
-        Grid::new(&data)
+        data
     }
 
     #[test]
@@ -123,7 +132,7 @@ mod tests {
 
     #[test]
     fn test_new() {
-        let grid = get_grid();
+        let grid = Grid::new(&get_input());
 
         assert_eq!(0, grid.min_x);
         assert_eq!(31, grid.max_x);
@@ -144,7 +153,7 @@ mod tests {
 
     #[test]
     fn test_get() {
-        let grid = get_grid();
+        let grid = Grid::new(&get_input());
 
         assert_eq!(Some('.'), grid.get(0, 0));
         assert_eq!(Some('#'), grid.get(3, 1));
@@ -153,7 +162,16 @@ mod tests {
 
     #[test]
     fn test_print() {
-        let grid = get_grid();
+        let input = get_input();
+        let grid = Grid::new(&input);
+
+        let output = grid.prepare_print();
+
+        assert_eq!(input.len(), output.len());
+        for i in 0..output.len() {
+            assert_eq!(input[i], output[i].as_str());
+        }
+
         grid.print();
     }
 }
