@@ -64,10 +64,10 @@ impl Grid {
         }
     }
 
-    pub fn get(&self, x: i64, y: i64) -> char {
+    pub fn get(&self, x: i64, y: i64) -> Option<char> {
         match self.data.get(&(x, y)) {
-            Some(c) => *c,
-            None => '.',
+            Some(c) => Some(*c),
+            None => None,
         }
     }
 
@@ -83,7 +83,10 @@ impl Grid {
         for y in self.min_y..self.max_y {
             let mut line = String::new();
             for x in self.min_x..self.max_x {
-                line.push(self.get(x, y));
+                match self.get(x, y) {
+                    Some(c) => line.push(c),
+                    _ => line.push('.'),
+                }
             }
             println!("{}", line);
         }
@@ -143,9 +146,9 @@ mod tests {
     fn test_get() {
         let grid = get_grid();
 
-        assert_eq!('.', grid.get(0, 0));
-        assert_eq!('#', grid.get(3, 1));
-        assert_eq!('.', grid.get(-3000, -3000));
+        assert_eq!(Some('.'), grid.get(0, 0));
+        assert_eq!(Some('#'), grid.get(3, 1));
+        assert_eq!(None, grid.get(-3000, -3000));
     }
 
     #[test]
