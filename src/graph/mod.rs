@@ -3,7 +3,17 @@ pub mod dijkstra;
 use std::collections::{HashMap, HashSet, VecDeque};
 use std::hash::Hash;
 
-pub fn bfs<T, F>(
+pub fn bfs<T>(
+    start: &'static T,
+    graph: &HashMap<&'static T, Vec<&'static T>>,
+) -> HashSet<&'static T>
+where
+    T: Eq + Hash,
+{
+    bfs_with_visitor(start, graph, |_n| {})
+}
+
+pub fn bfs_with_visitor<T, F>(
     start: &'static T,
     graph: &HashMap<&'static T, Vec<&'static T>>,
     mut visitor: F,
@@ -35,7 +45,17 @@ where
     visited
 }
 
-pub fn dfs<T, F>(
+pub fn dfs<T>(
+    start: &'static T,
+    graph: &HashMap<&'static T, Vec<&'static T>>,
+) -> HashSet<&'static T>
+where
+    T: Eq + Hash,
+{
+    dfs_with_visitor(start, graph, |_n| {})
+}
+
+pub fn dfs_with_visitor<T, F>(
     start: &'static T,
     graph: &HashMap<&'static T, Vec<&'static T>>,
     mut visitor: F,
@@ -76,7 +96,7 @@ mod tests {
 
     #[test]
     fn test_bfs_empty() {
-        let visited = bfs(&3, &HashMap::new(), |_n| {});
+        let visited = bfs(&3, &HashMap::new());
         assert_eq!(1, visited.len());
     }
 
@@ -94,14 +114,14 @@ mod tests {
         graph.insert(&8, vec![&6]);
 
         let mut order = vec![];
-        let visited = bfs(&0, &graph, |n| order.push(n));
+        let visited = bfs_with_visitor(&0, &graph, |n| order.push(n));
         assert_eq!(6, visited.len());
         assert!(visited.contains(&5));
         assert!(!visited.contains(&6));
         assert_eq!(vec![&0, &1, &2, &3, &4, &5], order);
 
         order = vec![];
-        let visited = bfs(&6, &graph, |n| order.push(n));
+        let visited = bfs_with_visitor(&6, &graph, |n| order.push(n));
         assert_eq!(3, visited.len());
         assert!(visited.contains(&6));
         assert!(!visited.contains(&5));
@@ -110,7 +130,7 @@ mod tests {
 
     #[test]
     fn test_dfs_empty() {
-        let visited = dfs(&3, &HashMap::new(), |_n| {});
+        let visited = dfs(&3, &HashMap::new());
         assert_eq!(1, visited.len());
     }
 
@@ -128,14 +148,14 @@ mod tests {
         graph.insert(&"8", vec![&"6"]);
 
         let mut order = vec![];
-        let visited = dfs(&"0", &graph, |n| order.push(n));
+        let visited = dfs_with_visitor(&"0", &graph, |n| order.push(n));
         assert_eq!(6, visited.len());
         assert!(visited.contains(&"5"));
         assert!(!visited.contains(&"6"));
         assert_eq!(vec![&"0", &"2", &"5", &"3", &"4", &"1"], order);
 
         order = vec![];
-        let visited = dfs(&"6", &graph, |n| order.push(n));
+        let visited = dfs_with_visitor(&"6", &graph, |n| order.push(n));
         assert_eq!(3, visited.len());
         assert!(visited.contains(&"6"));
         assert!(!visited.contains(&"5"));
