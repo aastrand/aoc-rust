@@ -39,12 +39,12 @@ mod tests {
 
     #[test]
     fn test_part1() {
-        assert_eq!(5, solve("src/examples/aoc201615example.txt", false));
-        assert_eq!(400589, solve("src/examples/aoc201615input.txt", false));
+        assert_eq!(5, solve("src/examples/aoc201615/example.txt", false));
+        assert_eq!(400589, solve("src/examples/aoc201615/input.txt", false));
     }
 
     #[test]
     fn test_part2() {
-        assert_eq!(3045959, solve("src/examples/aoc201615input.txt", true));
+        assert_eq!(3045959, solve("src/examples/aoc201615/input.txt", true));
     }
 }

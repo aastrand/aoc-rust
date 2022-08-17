@@ -50,13 +50,13 @@ mod tests {
 
     #[test]
     fn test_part1() {
-        assert_eq!(6, part1("src/examples/aoc201712example.txt"));
-        assert_eq!(378, part1("src/examples/aoc201712input.txt"));
+        assert_eq!(6, part1("src/examples/aoc201712/example.txt"));
+        assert_eq!(378, part1("src/examples/aoc201712/input.txt"));
     }
 
     #[test]
     fn test_part2() {
-        assert_eq!(2, part2("src/examples/aoc201712example.txt"));
-        assert_eq!(204, part2("src/examples/aoc201712input.txt"));
+        assert_eq!(2, part2("src/examples/aoc201712/example.txt"));
+        assert_eq!(204, part2("src/examples/aoc201712/input.txt"));
     }
 }
