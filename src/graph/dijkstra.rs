@@ -4,7 +4,7 @@ use std::hash::Hash;
 pub fn dijkstra<'a, T>(
     start: &'a T,
     end: &'a T,
-    graph: &HashMap<&'a T, Vec<&'a T>>,
+    graph: &'a HashMap<T, Vec<T>>,
 ) -> (Vec<&'a T>, HashMap<&'a T, f64>, HashMap<&'a T, &'a T>)
 where
     T: Eq + Hash,
@@ -12,7 +12,6 @@ where
     let mut q: HashSet<&'a T> = HashSet::new();
     let mut dist: HashMap<&'a T, f64> = HashMap::new();
     let mut prev: HashMap<&'a T, &'a T> = HashMap::new();
-    let empty: Vec<&'a T> = vec![];
 
     for pos in graph.keys() {
         dist.insert(pos, f64::INFINITY);
@@ -24,11 +23,13 @@ where
         if let Some(u) = get_min_dist(&q, &dist) {
             q.remove(u);
 
-            for n in graph.get(u).unwrap_or(&empty) {
-                let alt = dist.get(u).unwrap_or(&f64::INFINITY) + 1.0;
-                if alt < *dist.get(n).unwrap_or(&f64::INFINITY) {
-                    dist.insert(n, alt);
-                    prev.insert(n, u);
+            if let Some(neighbours) = graph.get(u) {
+                for n in neighbours {
+                    let alt = dist.get(u).unwrap_or(&f64::INFINITY) + 1.0;
+                    if alt < *dist.get(n).unwrap_or(&f64::INFINITY) {
+                        dist.insert(n, alt);
+                        prev.insert(n, u);
+                    }
                 }
             }
         }
@@ -58,7 +59,7 @@ where
     let mut min_node = None;
     for v in q {
         if let Some(d) = dist.get(*v) {
-            if *d < min {
+            if *d <= min {
                 min = *d;
                 min_node = Some(*v);
             }
@@ -85,17 +86,17 @@ mod tests {
     #[test]
     fn test_dijkstra() {
         let mut graph = HashMap::new();
-        graph.insert(&0, vec![&1, &5]);
-        graph.insert(&1, vec![&0, &2]);
-        graph.insert(&2, vec![&1, &3, &4]);
-        graph.insert(&3, vec![&2, &4]);
-        graph.insert(&4, vec![&2, &10]);
-        graph.insert(&5, vec![&0, &6, &7]);
-        graph.insert(&6, vec![&5, &7, &8, &10]);
-        graph.insert(&7, vec![&5, &6, &8]);
-        graph.insert(&8, vec![&6, &7, &9]);
-        graph.insert(&9, vec![&8]);
-        graph.insert(&10, vec![&4, &6]);
+        graph.insert(0, vec![1, 5]);
+        graph.insert(1, vec![0, 2]);
+        graph.insert(2, vec![1, 3, 4]);
+        graph.insert(3, vec![2, 4]);
+        graph.insert(4, vec![2, 10]);
+        graph.insert(5, vec![0, 6, 7]);
+        graph.insert(6, vec![5, 7, 8, 10]);
+        graph.insert(7, vec![5, 6, 8]);
+        graph.insert(8, vec![6, 7, 9]);
+        graph.insert(9, vec![8]);
+        graph.insert(10, vec![4, 6]);
 
         let (path, dist, prev) = dijkstra(&0, &10, &graph);
         assert_eq!(vec![&0, &5, &6, &10], path);

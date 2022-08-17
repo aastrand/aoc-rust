@@ -30,8 +30,10 @@ pub static OFFSETS: (
     TOP_RIGHT,
     BOTTOM_LEFT,
 );
-pub static OFFSETS_STRAIGHT: ((i64, i64), (i64, i64), (i64, i64), (i64, i64)) =
-    (RIGHT, LEFT, TOP, BOTTOM);
+
+lazy_static! {
+    pub static ref OFFSETS_STRAIGHT: Vec<(i64, i64)> = vec![RIGHT, LEFT, TOP, BOTTOM];
+}
 
 pub struct Grid {
     data: HashMap<(i64, i64), char>,
@@ -110,6 +112,22 @@ impl Grid {
         for (k, v) in &self.data {
             visitor(*k, *v)
         }
+    }
+
+    pub fn min_x(&self) -> i64 {
+        self.min_x
+    }
+
+    pub fn max_x(&self) -> i64 {
+        self.max_x
+    }
+
+    pub fn min_y(&self) -> i64 {
+        self.min_y
+    }
+
+    pub fn max_y(&self) -> i64 {
+        self.max_y
     }
 }
 
