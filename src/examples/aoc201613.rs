@@ -106,7 +106,6 @@ fn bfs<'a>(
 
     while q.len() > 0 {
         let cur = q.pop_front().unwrap();
-        println!("{:?}", cur);
         if let Some(neighbours) = graph.get(cur) {
             for n in neighbours {
                 if !visited.contains(n) {
@@ -165,6 +164,8 @@ mod tests {
 
     #[test]
     fn test_part2() {
-        assert_eq!(127, part2(1364, 100));
+        // too costly in debug
+        // assert_eq!(127, part2(1364, 100));
+        assert_eq!(40, part2(1364, 10));
     }
 }

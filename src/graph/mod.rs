@@ -3,7 +3,7 @@ pub mod dijkstra;
 use std::collections::{HashMap, HashSet, VecDeque};
 use std::hash::Hash;
 
-pub fn bfs<'a, T>(start: &'a T, graph: &HashMap<&'a T, Vec<&'a T>>) -> HashSet<&'a T>
+pub fn bfs<'a, T>(start: &'a T, graph: &'a HashMap<T, Vec<T>>) -> HashSet<&'a T>
 where
     T: Eq + Hash,
 {
@@ -12,7 +12,7 @@ where
 
 pub fn bfs_with_visitor<'a, T, F>(
     start: &'a T,
-    graph: &HashMap<&'a T, Vec<&'a T>>,
+    graph: &'a HashMap<T, Vec<T>>,
     mut visitor: F,
 ) -> HashSet<&'a T>
 where
@@ -25,16 +25,16 @@ where
     q.push_back(start);
     visited.insert(start);
     visitor(start);
-    let empty = vec![];
 
     while q.len() > 0 {
         let cur = q.pop_front().unwrap();
-        let neighbours = graph.get(cur).unwrap_or(&empty);
-        for n in neighbours {
-            if !visited.contains(n) {
-                q.push_back(n);
-                visited.insert(n);
-                visitor(n);
+        if let Some(neighbours) = graph.get(cur) {
+            for n in neighbours {
+                if !visited.contains(n) {
+                    q.push_back(n);
+                    visited.insert(n);
+                    visitor(n);
+                }
             }
         }
     }
@@ -42,7 +42,7 @@ where
     visited
 }
 
-pub fn dfs<'a, T>(start: &'a T, graph: &HashMap<&'a T, Vec<&'a T>>) -> HashSet<&'a T>
+pub fn dfs<'a, T>(start: &'a T, graph: &'a HashMap<T, Vec<T>>) -> HashSet<&'a T>
 where
     T: Eq + Hash,
 {
@@ -51,7 +51,7 @@ where
 
 pub fn dfs_with_visitor<'a, T, F>(
     start: &'a T,
-    graph: &HashMap<&'a T, Vec<&'a T>>,
+    graph: &'a HashMap<T, Vec<T>>,
     mut visitor: F,
 ) -> HashSet<&'a T>
 where
@@ -64,7 +64,6 @@ where
     q.push_back(start);
     visited.insert(start);
     visitor(start);
-    let empty = vec![];
 
     while q.len() > 0 {
         let cur = q.pop_back().unwrap();
@@ -73,10 +72,11 @@ where
             visitor(cur);
         }
 
-        let neighbours = graph.get(cur).unwrap_or(&empty);
-        for n in neighbours {
-            if !visited.contains(n) {
-                q.push_back(n);
+        if let Some(neighbours) = graph.get(cur) {
+            for n in neighbours {
+                if !visited.contains(n) {
+                    q.push_back(n);
+                }
             }
         }
     }
@@ -90,22 +90,23 @@ mod tests {
 
     #[test]
     fn test_bfs_empty() {
-        let visited = bfs(&3, &HashMap::new());
+        let graph = HashMap::new();
+        let visited = bfs(&3, &graph);
         assert_eq!(1, visited.len());
     }
 
     #[test]
     fn test_bfs_traverse() {
-        let mut graph: HashMap<&i64, Vec<&i64>> = HashMap::new();
-        graph.insert(&0, vec![&1, &2]);
-        graph.insert(&1, vec![&0, &2, &3, &4]);
-        graph.insert(&2, vec![&0, &1, &3, &5]);
-        graph.insert(&3, vec![&1, &2, &4, &5]);
-        graph.insert(&4, vec![&2, &3]);
-        graph.insert(&5, vec![&1, &3]);
-        graph.insert(&6, vec![&7, &8]);
-        graph.insert(&7, vec![&6]);
-        graph.insert(&8, vec![&6]);
+        let mut graph: HashMap<i64, Vec<i64>> = HashMap::new();
+        graph.insert(0, vec![1, 2]);
+        graph.insert(1, vec![0, 2, 3, 4]);
+        graph.insert(2, vec![0, 1, 3, 5]);
+        graph.insert(3, vec![1, 2, 4, 5]);
+        graph.insert(4, vec![2, 3]);
+        graph.insert(5, vec![1, 3]);
+        graph.insert(6, vec![7, 8]);
+        graph.insert(7, vec![6]);
+        graph.insert(8, vec![6]);
 
         let mut order = vec![];
         let visited = bfs_with_visitor(&0, &graph, |n| order.push(n));
@@ -124,22 +125,23 @@ mod tests {
 
     #[test]
     fn test_dfs_empty() {
-        let visited = dfs(&3, &HashMap::new());
+        let graph = HashMap::new();
+        let visited = dfs(&3, &graph);
         assert_eq!(1, visited.len());
     }
 
     #[test]
     fn test_dfs_traverse() {
         let mut graph = HashMap::new();
-        graph.insert(&"0", vec![&"1", &"2"]);
-        graph.insert(&"1", vec![&"0", &"2", &"3", &"4"]);
-        graph.insert(&"2", vec![&"0", &"1", &"3", &"5"]);
-        graph.insert(&"3", vec![&"1", &"2", &"4", &"5"]);
-        graph.insert(&"4", vec![&"2", &"3"]);
-        graph.insert(&"5", vec![&"1", &"3"]);
-        graph.insert(&"6", vec![&"7", &"8"]);
-        graph.insert(&"7", vec![&"6"]);
-        graph.insert(&"8", vec![&"6"]);
+        graph.insert("0", vec!["1", "2"]);
+        graph.insert("1", vec!["0", "2", "3", "4"]);
+        graph.insert("2", vec!["0", "1", "3", "5"]);
+        graph.insert("3", vec!["1", "2", "4", "5"]);
+        graph.insert("4", vec!["2", "3"]);
+        graph.insert("5", vec!["1", "3"]);
+        graph.insert("6", vec!["7", "8"]);
+        graph.insert("7", vec!["6"]);
+        graph.insert("8", vec!["6"]);
 
         let mut order = vec![];
         let visited = dfs_with_visitor(&"0", &graph, |n| order.push(n));
