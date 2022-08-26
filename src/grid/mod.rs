@@ -11,30 +11,21 @@ pub static BOTTOM_RIGHT: (i64, i64) = (1, 1);
 pub static TOP_RIGHT: (i64, i64) = (1, -1);
 pub static BOTTOM_LEFT: (i64, i64) = (-1, 1);
 
-pub static OFFSETS: (
-    (i64, i64),
-    (i64, i64),
-    (i64, i64),
-    (i64, i64),
-    (i64, i64),
-    (i64, i64),
-    (i64, i64),
-    (i64, i64),
-) = (
-    RIGHT,
-    LEFT,
-    BOTTOM,
-    TOP,
-    TOP_LEFT,
-    BOTTOM_RIGHT,
-    TOP_RIGHT,
-    BOTTOM_LEFT,
-);
-
 lazy_static! {
+    pub static ref OFFSETS: Vec<(i64, i64)> = vec![
+        RIGHT,
+        LEFT,
+        BOTTOM,
+        TOP,
+        TOP_LEFT,
+        BOTTOM_RIGHT,
+        TOP_RIGHT,
+        BOTTOM_LEFT,
+    ];
     pub static ref OFFSETS_STRAIGHT: Vec<(i64, i64)> = vec![RIGHT, LEFT, TOP, BOTTOM];
 }
 
+#[derive(PartialEq, Eq)]
 pub struct Grid {
     data: HashMap<(i64, i64), char>,
     min_x: i64,
@@ -48,7 +39,7 @@ impl Grid {
         Grid::new(&vec![])
     }
 
-    pub fn new(input: &Vec<&str>) -> Grid {
+    pub fn new(input: &Vec<String>) -> Grid {
         let height = input.len();
         let width = if height > 0 { input[0].len() } else { 0 };
         let mut data = HashMap::new();
@@ -135,17 +126,17 @@ impl Grid {
 mod tests {
     use super::*;
 
-    fn get_input<'a>() -> Vec<&'a str> {
-        let mut data = vec![];
-        data.push(".......#................#......");
-        data.push("...#.#.....#.##.....#..#.......");
-        data.push("..#..#.#......#.#.#............");
-        data.push("....#...#...##.....#..#.....#..");
-        data.push("....#.......#.##......#...#..#.");
-        data.push("...............#.#.#.....#..#..");
-        data.push("...##...#...#..##.###...##.....");
-        data.push("##..#.#...##.....#.#..........#");
-        data.push(".#....#..#..#......#....#....#.");
+    fn get_input<'a>() -> Vec<String> {
+        let mut data: Vec<String> = vec![];
+        data.push(".......#................#......".to_string());
+        data.push("...#.#.....#.##.....#..#.......".to_string());
+        data.push("..#..#.#......#.#.#............".to_string());
+        data.push("....#...#...##.....#..#.....#..".to_string());
+        data.push("....#.......#.##......#...#..#.".to_string());
+        data.push("...............#.#.#.....#..#..".to_string());
+        data.push("...##...#...#..##.###...##.....".to_string());
+        data.push("##..#.#...##.....#.#..........#".to_string());
+        data.push(".#....#..#..#......#....#....#.".to_string());
 
         data
     }
