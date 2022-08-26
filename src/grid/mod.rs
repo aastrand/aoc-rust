@@ -1,6 +1,10 @@
 pub mod hex;
 
-use std::{cmp::max, cmp::min, collections::HashMap};
+use std::{
+    cmp::max,
+    cmp::min,
+    collections::{HashMap, HashSet},
+};
 
 pub static RIGHT: (i64, i64) = (1, 0);
 pub static LEFT: (i64, i64) = (-1, 0);
@@ -136,6 +140,35 @@ impl<T> Grid<T> {
     pub fn max_y(&self) -> i64 {
         self.max_y
     }
+
+    pub fn to_graph(&self, values: HashSet<T>) -> HashMap<(i64, i64), Vec<(i64, i64)>>
+    where
+        T: Copy + Eq + std::hash::Hash,
+    {
+        let mut graph = HashMap::new();
+
+        for (pos, value) in self.data.iter() {
+            if values.contains(value) {
+                if !graph.contains_key(pos) {
+                    let n = vec![];
+                    graph.insert(*pos, n);
+                }
+
+                let neighbours = graph.get_mut(pos).unwrap();
+
+                for dir in OFFSETS_STRAIGHT.iter() {
+                    let neighbour_pos = (dir.0 + pos.0, dir.1 + pos.1);
+                    if let Some(neighbour_value) = self.get(neighbour_pos.0, neighbour_pos.1) {
+                        if values.contains(&neighbour_value) {
+                            neighbours.push(neighbour_pos);
+                        }
+                    }
+                }
+            }
+        }
+
+        graph
+    }
 }
 
 #[cfg(test)]
@@ -227,5 +260,20 @@ mod tests {
         });
 
         assert_eq!(1, count);
+    }
+
+    #[test]
+    fn test_to_graph() {
+        let grid: Grid<char> = Grid::<char>::new(&get_input());
+        let mut values = HashSet::new();
+        values.insert('.');
+
+        let graph = grid.to_graph(values);
+
+        assert_eq!(218, graph.len());
+        let neighours = graph.get(&(0, 0)).unwrap();
+        assert_eq!(2, neighours.len());
+        assert_eq!((1, 0), neighours[0]);
+        assert_eq!((0, 1), neighours[1]);
     }
 }
