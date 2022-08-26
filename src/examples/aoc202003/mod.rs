@@ -1,7 +1,7 @@
 use super::super::grid::Grid;
 use super::super::io::lines_from_file;
 
-fn get_grid(filename: &str) -> Grid {
+fn get_grid(filename: &str) -> Grid<char> {
     let contents = lines_from_file(filename);
 
     let height = contents.len();
@@ -27,7 +27,7 @@ fn solve1(filename: &str) -> u64 {
     count_trees(&grid, 1, 3)
 }
 
-fn count_trees(grid: &Grid, down: i64, right: i64) -> u64 {
+fn count_trees(grid: &Grid<char>, down: i64, right: i64) -> u64 {
     let mut x = 0;
     let mut y = 0;
     let mut result = 0;

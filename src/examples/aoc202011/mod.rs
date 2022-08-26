@@ -1,7 +1,7 @@
 use super::super::grid::{Grid, OFFSETS};
 use super::super::io::lines_from_file;
 
-fn count_char(chr: char, grid: &mut Grid) -> u64 {
+fn count_char(chr: char, grid: &mut Grid<char>) -> u64 {
     let mut sum = 0;
 
     grid.walk(|_k, v| {
@@ -13,7 +13,7 @@ fn count_char(chr: char, grid: &mut Grid) -> u64 {
     sum
 }
 
-fn num_adjecent(chr: char, y: i64, x: i64, grid: &Grid) -> u64 {
+fn num_adjecent(chr: char, y: i64, x: i64, grid: &Grid<char>) -> u64 {
     let mut sum = 0;
 
     for pos in OFFSETS.iter() {
@@ -39,10 +39,10 @@ Otherwise, the seat's state does not change.
 Floor (.) never changes; seats don't move, and nobody sits on the floor.
 */
 fn mutate_grid(
-    grid: &Grid,
-    empty_mutation: &dyn Fn(i64, i64, &Grid) -> char,
-    occupied_mutation: &dyn Fn(i64, i64, &Grid) -> char,
-) -> Grid {
+    grid: &Grid<char>,
+    empty_mutation: &dyn Fn(i64, i64, &Grid<char>) -> char,
+    occupied_mutation: &dyn Fn(i64, i64, &Grid<char>) -> char,
+) -> Grid<char> {
     let mut new_grid = Grid::empty();
 
     for y in 0..grid.max_y() + 1 {
@@ -61,7 +61,7 @@ fn mutate_grid(
     new_grid
 }
 
-fn empty_mutation_1(y: i64, x: i64, grid: &Grid) -> char {
+fn empty_mutation_1(y: i64, x: i64, grid: &Grid<char>) -> char {
     if num_adjecent('#', y, x, &grid) == 0 {
         '#'
     } else {
@@ -69,7 +69,7 @@ fn empty_mutation_1(y: i64, x: i64, grid: &Grid) -> char {
     }
 }
 
-fn occupied_mutation_1(y: i64, x: i64, grid: &Grid) -> char {
+fn occupied_mutation_1(y: i64, x: i64, grid: &Grid<char>) -> char {
     if num_adjecent('#', y, x, &grid) >= 4 {
         'L'
     } else {
@@ -79,7 +79,7 @@ fn occupied_mutation_1(y: i64, x: i64, grid: &Grid) -> char {
 
 #[allow(dead_code)]
 fn solve1(filename: &str) -> u64 {
-    let mut grid = Grid::new(&lines_from_file(filename));
+    let mut grid: Grid<char> = Grid::<char>::new(&lines_from_file(filename));
 
     loop {
         let new_grid = mutate_grid(&grid, &empty_mutation_1, &occupied_mutation_1);
@@ -92,7 +92,7 @@ fn solve1(filename: &str) -> u64 {
     count_char('#', &mut grid)
 }
 
-fn num_visible_adjecent(chr: char, y: i64, x: i64, grid: &Grid) -> u64 {
+fn num_visible_adjecent(chr: char, y: i64, x: i64, grid: &Grid<char>) -> u64 {
     let mut sum = 0;
 
     for pos in OFFSETS.iter() {
@@ -116,7 +116,7 @@ fn num_visible_adjecent(chr: char, y: i64, x: i64, grid: &Grid) -> u64 {
     sum
 }
 
-fn empty_mutation_2(y: i64, x: i64, grid: &Grid) -> char {
+fn empty_mutation_2(y: i64, x: i64, grid: &Grid<char>) -> char {
     if num_visible_adjecent('#', y, x, &grid) == 0 {
         '#'
     } else {
@@ -124,7 +124,7 @@ fn empty_mutation_2(y: i64, x: i64, grid: &Grid) -> char {
     }
 }
 
-fn occupied_mutation_2(y: i64, x: i64, grid: &Grid) -> char {
+fn occupied_mutation_2(y: i64, x: i64, grid: &Grid<char>) -> char {
     if num_visible_adjecent('#', y, x, &grid) >= 5 {
         'L'
     } else {
@@ -134,7 +134,7 @@ fn occupied_mutation_2(y: i64, x: i64, grid: &Grid) -> char {
 
 #[allow(dead_code)]
 fn solve2(filename: &str) -> u64 {
-    let mut grid = Grid::new(&lines_from_file(filename));
+    let mut grid: Grid<char> = Grid::<char>::new(&lines_from_file(filename));
 
     loop {
         let new_grid = mutate_grid(&grid, &empty_mutation_2, &occupied_mutation_2);

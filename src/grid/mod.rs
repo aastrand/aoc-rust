@@ -26,20 +26,26 @@ lazy_static! {
 }
 
 #[derive(PartialEq, Eq)]
-pub struct Grid {
-    data: HashMap<(i64, i64), char>,
+pub struct Grid<T> {
+    data: HashMap<(i64, i64), T>,
     min_x: i64,
     max_x: i64,
     min_y: i64,
     max_y: i64,
 }
 
-impl Grid {
-    pub fn empty() -> Grid {
-        Grid::new(&vec![])
+impl<T> Grid<T> {
+    pub fn empty() -> Grid<T> {
+        Grid {
+            data: HashMap::new(),
+            min_x: 0,
+            max_x: 0,
+            min_y: 0,
+            max_y: 0,
+        }
     }
 
-    pub fn new(input: &Vec<String>) -> Grid {
+    pub fn new(input: &Vec<String>) -> Grid<char> {
         let height = input.len();
         let width = if height > 0 { input[0].len() } else { 0 };
         let mut data = HashMap::new();
@@ -59,14 +65,17 @@ impl Grid {
         }
     }
 
-    pub fn get(&self, x: i64, y: i64) -> Option<char> {
+    pub fn get(&self, x: i64, y: i64) -> Option<T>
+    where
+        T: Copy,
+    {
         match self.data.get(&(x, y)) {
             Some(c) => Some(*c),
             None => None,
         }
     }
 
-    pub fn set(&mut self, input: char, x: i64, y: i64) {
+    pub fn set(&mut self, input: T, x: i64, y: i64) {
         self.data.insert((x, y), input);
         self.min_x = min(self.min_x, x);
         self.max_x = max(self.max_x, x);
@@ -74,13 +83,16 @@ impl Grid {
         self.max_y = max(self.max_y, y);
     }
 
-    fn prepare_print(&self) -> Vec<String> {
+    fn prepare_print(&self) -> Vec<String>
+    where
+        T: std::fmt::Display + Copy,
+    {
         let mut output = vec![];
         for y in self.min_y..self.max_y {
             let mut line = String::new();
             for x in self.min_x..self.max_x {
                 match self.get(x, y) {
-                    Some(c) => line.push(c),
+                    Some(c) => line.push_str(&format!("{}", c)),
                     _ => line.push('.'),
                 }
             }
@@ -90,7 +102,10 @@ impl Grid {
         output
     }
 
-    pub fn print(&self) {
+    pub fn print(&self)
+    where
+        T: std::fmt::Display + Copy,
+    {
         for line in self.prepare_print() {
             println!("{}", line);
         }
@@ -98,7 +113,8 @@ impl Grid {
 
     pub fn walk<F>(&mut self, mut visitor: F)
     where
-        F: FnMut((i64, i64), char),
+        T: Copy,
+        F: FnMut((i64, i64), T),
     {
         for (k, v) in &self.data {
             visitor(*k, *v)
@@ -143,7 +159,7 @@ mod tests {
 
     #[test]
     fn test_empty() {
-        let grid = Grid::empty();
+        let grid: Grid<char> = Grid::empty();
         assert_eq!(0, grid.min_x);
         assert_eq!(0, grid.max_x);
         assert_eq!(0, grid.min_y);
@@ -152,7 +168,7 @@ mod tests {
 
     #[test]
     fn test_new() {
-        let grid = Grid::new(&get_input());
+        let grid: Grid<char> = Grid::<char>::new(&get_input());
 
         assert_eq!(0, grid.min_x);
         assert_eq!(31, grid.max_x);
@@ -173,7 +189,7 @@ mod tests {
 
     #[test]
     fn test_get() {
-        let grid = Grid::new(&get_input());
+        let grid: Grid<char> = Grid::<char>::new(&get_input());
 
         assert_eq!(Some('.'), grid.get(0, 0));
         assert_eq!(Some('#'), grid.get(3, 1));
@@ -183,7 +199,7 @@ mod tests {
     #[test]
     fn test_print() {
         let input = get_input();
-        let grid = Grid::new(&input);
+        let grid = Grid::<char>::new(&input);
 
         let output = grid.prepare_print();
 

@@ -7,7 +7,7 @@ use crate::grid::OFFSETS_STRAIGHT;
 use super::super::graph::dijkstra;
 use super::super::grid::Grid;
 
-fn get_grid(input: i64, max_x: i64, max_y: i64) -> Grid {
+fn get_grid(input: i64, max_x: i64, max_y: i64) -> Grid<char> {
     let mut grid = Grid::empty();
     for y in 0..max_y + 1 {
         for x in 0..max_x + 1 {
@@ -35,7 +35,7 @@ fn get_grid(input: i64, max_x: i64, max_y: i64) -> Grid {
     grid
 }
 
-fn build_graph<'a>(grid: Grid) -> HashMap<(i64, i64), Vec<(i64, i64)>> {
+fn build_graph<'a>(grid: Grid<char>) -> HashMap<(i64, i64), Vec<(i64, i64)>> {
     let mut graph: HashMap<(i64, i64), Vec<(i64, i64)>> = HashMap::new();
     for y in 0..grid.max_y() {
         for x in 0..grid.max_x() {
