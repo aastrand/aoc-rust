@@ -45,10 +45,7 @@ fn solve1(filename: &str) -> u64 {
 #[allow(dead_code)]
 fn solve2(filename: &str) -> i64 {
     let grid: Grid<char> = Grid::<char>::new(&lines_from_file(filename));
-    let mut values = HashSet::new();
-    for value in ['0', '1', '2', '3', '4', '5', '6', '7', '8'] {
-        values.insert(value);
-    }
+    let values = HashSet::from_iter((0..9 as u8).map(|v| (v + 48) as char));
 
     let graph = grid.to_graph(values);
     let mut sizes = vec![];
